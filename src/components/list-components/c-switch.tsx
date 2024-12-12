@@ -1,21 +1,30 @@
-import { CSSProperties, FormEventHandler, ReactNode } from "react";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+import {
+  FormControl,
+  FormDescription,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
+import { IComponent } from "@/utils/types";
+import { Switch } from "../ui/switch";
 
-type ISwitch = {
-  label?: ReactNode;
-  placeholder?: string;
-  htmlFor?: string;
-  value?: string;
-  onChange?: FormEventHandler<HTMLButtonElement>;
-  style?: CSSProperties;
-};
-
-const CSwitch = ({ label, value, onChange, htmlFor, style }: ISwitch) => {
+const CSwitch = ({ style, field, item }: IComponent) => {
   return (
-    <div className="flex items-center space-x-2" style={style}>
-      <Switch id={htmlFor} value={value} onChange={onChange} />
-      <Label htmlFor={htmlFor}>{label}</Label>
+    <div className="grid items-center gap-1.5" style={style}>
+      <FormItem>
+        <div className="flex flex-row items-start gap-2">
+          <FormControl>
+            <Switch {...field} disabled={item.disabled} />
+          </FormControl>
+          <div className="flex flex-col gap-1">
+            <FormLabel>{item.label}</FormLabel>
+            {item.description ? (
+              <FormDescription>{item.description}</FormDescription>
+            ) : null}
+          </div>
+        </div>
+        <FormMessage />
+      </FormItem>
     </div>
   );
 };

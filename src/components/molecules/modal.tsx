@@ -10,6 +10,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -17,11 +18,12 @@ import {
 } from "@/components/ui/form";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
-import { IItem } from "@/utils/types";
-import { ReactNode, useState } from "react";
+import { IItem, ISelect } from "@/utils/types";
+import { ReactNode, useMemo, useState } from "react";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Checkbox } from "../ui/checkbox";
+import CSelect from "./choice-select";
 
 type IModal = {
   data: IItem;
@@ -31,11 +33,12 @@ type IModal = {
 
 const formSchema = z.object({
   label: z.string().nonempty(),
-  description: z.string(),
-  placeholder: z.string(),
-  required: z.string(),
-  disabled: z.string(),
-  pattern: z.string(),
+  description: z.string().optional(),
+  placeholder: z.string().optional(),
+  required: z.boolean().default(false),
+  disabled: z.boolean().default(false),
+  pattern: z.string().optional(),
+  type: z.string().optional(),
 });
 
 type ISchema = z.infer<typeof formSchema>;
@@ -50,9 +53,29 @@ const Modal = ({ onSubmit, data, children }: IModal) => {
   });
 
   const handleSubmit = (e: ISchema) => {
+    console.log(e);
     onSubmit?.(e);
     setOpen(false);
   };
+
+  const typeItems: ISelect["items"] = [
+    {
+      label: "text",
+      value: "text",
+    },
+    {
+      label: "password",
+      value: "password",
+    },
+    {
+      label: "number",
+      value: "number",
+    },
+    {
+      label: "email",
+      value: "email",
+    },
+  ];
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -105,16 +128,41 @@ const Modal = ({ onSubmit, data, children }: IModal) => {
                 </FormItem>
               )}
             />
+            {data.kind === "text-input" ? (
+              <FormField
+                control={form.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Type</FormLabel>
+                    <CSelect
+                      items={typeItems}
+                      placeholder="Select input type"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : null}
             <div className="flex flex-row items-center gap-2">
               <FormField
                 control={form.control}
                 name="required"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-end gap-2">
-                    <FormControl>
-                      <Checkbox {...field} />
-                    </FormControl>
-                    <FormLabel>Required</FormLabel>
+                  <FormItem>
+                    <div className="flex flex-row items-end gap-2">
+                      <FormControl>
+                        <Checkbox
+                          {...field}
+                          value={""}
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <FormLabel>Required</FormLabel>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -123,23 +171,29 @@ const Modal = ({ onSubmit, data, children }: IModal) => {
                 control={form.control}
                 name="disabled"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-end gap-2">
-                    <FormControl>
-                      <Checkbox {...field} />
-                    </FormControl>
-                    <FormLabel>Disabled</FormLabel>
+                  <FormItem>
+                    <div className="flex flex-row items-end gap-2">
+                      <FormControl>
+                        <Checkbox
+                          {...field}
+                          value={""}
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                      <FormLabel>Disabled</FormLabel>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-
             <FormField
               control={form.control}
               name="pattern"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>Pattern</FormLabel>
+                  <FormLabel>RegEx Pattern</FormLabel>
                   <FormControl>
                     <Input placeholder="Pattern" {...field} />
                   </FormControl>

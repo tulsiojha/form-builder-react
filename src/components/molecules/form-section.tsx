@@ -26,7 +26,8 @@ const FormSection = ({
                 return {
                   layout: true,
                   id: uuid(),
-                  children: [{ ...x, id: uuid() }],
+                  //@ts-ignore
+                  children: [{ ...x, id: `${x.kind}_${uuid()}` }],
                 };
               }
             });

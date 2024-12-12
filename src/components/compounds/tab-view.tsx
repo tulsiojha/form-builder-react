@@ -4,13 +4,8 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { ReactNode } from "react";
+import { ITabs } from "@/utils/types";
 
-type ITabs = {
-  triggers: { label: ReactNode; value: string }[];
-  contents: { render: ReactNode; value: string }[];
-  defaultValue: string;
-};
 const TabView = ({ triggers = [], contents = [], defaultValue }: ITabs) => {
   return (
     <NativeTabs defaultValue={defaultValue}>

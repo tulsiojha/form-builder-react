@@ -1,4 +1,5 @@
 import hljs from "highlight.js";
+import { Copy } from "./copy";
 
 const CodeBlock = ({
   language = "jsx",
@@ -14,6 +15,7 @@ const CodeBlock = ({
       <pre className="hljs p-3 overflow-x-auto">
         <code dangerouslySetInnerHTML={{ __html: highlightedCode }} />
       </pre>
+      <Copy code={code} />
     </div>
   );
 };

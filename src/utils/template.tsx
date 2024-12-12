@@ -1,9 +1,11 @@
 import * as prettier from "prettier/standalone";
 import * as parserBabel from "prettier/parser-babel";
 import * as prettierPluginEstree from "prettier/plugins/estree";
-
 import { IItem, ILayout } from "./types";
+import { getStyle } from "./commons";
+import { imports } from "./data";
 
+// Outer template for code generatioon
 const wrapperTemplate = ({
   body,
   imports,
@@ -13,6 +15,8 @@ const wrapperTemplate = ({
   imports: string;
   formSchema: string;
 }) => `
+'use client';
+
 import {
   Form,
   FormControl,
@@ -22,27 +26,25 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 ${imports}
 
 
-const formSchema = z.object(${formSchema});
+${formSchema}
 
 type ISchema = z.infer<typeof formSchema>
 
-const App = ()=>{
+const NewForm = ()=>{
 
   const form = useForm<ISchema>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      ...data,
-    },
   });
 
   const handleSubmit = (e: ISchema) => {
-
+    console.log(e);
   };
 
 
@@ -50,95 +52,263 @@ const App = ()=>{
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        className="flex flex-col gap-6"
+        className="flex flex-col gap-6 max-w-3xl mx-auto py-16"
         >
         ${body}
+        <Button type="submit" className="w-fit">
+          Submit
+        </Button>
       </form>
     </Form>
   )  
 }
+
+export default NewForm;
 `;
 
-const generateImportsForItems = (items: ILayout[]) => {
+// function to generate zod schema for given layouts
+const generateZodSchema = (items: ILayout[]) => {
   const handleGenerate = (item: IItem) => {
     switch (item.kind) {
-      case "checkbox":
-        return `import { Checkbox } from "@/components/ui/checkbox";`;
-      case "text-input":
-        return `import { Input } from "@/components/ui/input";`;
-      case "textarea":
-        return `import { Textarea } from "@/components/ui/textarea";`;
-      case "slider":
-        return `import { Slider } from "@/components/ui/slider";`;
       case "switch":
-        return `import { Switch } from "@/components/ui/switch";`;
-      case "radiogroup":
-        return ``;
+      case "checkbox":
+        return `"${item.id}":${
+          item.required
+            ? "z.boolean().default(false)"
+            : "z.boolean().optional()"
+        },`;
+      case "textarea":
+      case "text-input":
+        return `"${item.id}":${item.required ? "z.string()" : "z.string().optional()"},`;
+      case "slider":
+        return `"${item.id}":${item.required ? "z.number().default(0)" : "z.number().optional().default(0)"},`;
+      case "input-otp":
+        return `"${item.id}":${item.required ? "z.string()" : "z.string().optional()"},`;
+      case "datepicker":
+        return `"${item.id}":${item.required ? "z.coerce.date()" : "z.coerce.date().optional()"},`;
       default:
         return "";
     }
   };
 
-  const imports = items.reduce((prev, current) => {
+  const zodWrapper = (d: string) => {
+    return `const formSchema = z.object({${d}});`;
+  };
+
+  const schema = items.reduce((prev, current) => {
     return prev + current.children.reduce((p, c) => p + handleGenerate(c), "");
   }, "");
-  return imports;
+
+  return zodWrapper(schema);
 };
 
+// function to generate imports for given layouts
+const generateImportsForItems = (items: ILayout[]) => {
+  const t = items
+    .flatMap((item) => item.children)
+    .reduce((p, c) => {
+      return [...p, ...imports[c.kind]];
+    }, [] as string[]);
+  return [...new Set(t)].join("\n");
+};
+
+//function to generate code for given item
 const generateItemTemplate = (item: IItem) => {
+  let d = "";
   switch (item.kind) {
     case "checkbox":
-      return `<FormField
-        control={form.control}
-        name="checkbox"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Username</FormLabel>
+      d = `<FormItem>
+           <div className="flex flex-row items-start gap-2">
             <FormControl>
-              <Checkbox {...field}/>
+              <Checkbox 
+                {...field} 
+                ${item.disabled ? "disabled" : ""}
+                value=""
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
             </FormControl>
-            <FormDescription>This is your public display name.</FormDescription>
-            <FormMessage />
-          </FormItem>
-        )}
-      />`;
+            <div className="flex flex-col gap-1">
+              <FormLabel>${item.label}</FormLabel>
+              ${item.description ? `<FormDescription>${item.description}</FormDescription>` : null}
+            </div>
+          </div>
+          <FormMessage />
+        </FormItem>`;
+      break;
+    case "switch":
+      d = `<FormItem>
+           <div className="flex flex-row items-start gap-2">
+            <FormControl>
+              <Switch 
+                {...field} 
+                ${item.disabled ? "disabled" : ""}
+                value=""
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+            </FormControl>
+            <div className="flex flex-col gap-1">
+              <FormLabel>${item.label}</FormLabel>
+              ${item.description ? `<FormDescription>${item.description}</FormDescription>` : null}
+            </div>
+          </div>
+          <FormMessage />
+        </FormItem>`;
+      break;
     case "text-input":
-      return `<FormField
-        control={form.control}
-        name="name"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Username</FormLabel>
+      d = `<FormItem>
+            <FormLabel>${item.label}</FormLabel>
             <FormControl>
-              <Input {...field}/>
+              <Input 
+                {...field} 
+                ${item.disabled ? "disabled" : ""}
+                placeholder="${item.placeholder}"
+              />
             </FormControl>
-            <FormDescription>This is your public display name.</FormDescription>
+            <FormDescription>${item.description}</FormDescription>
             <FormMessage />
-          </FormItem>
-        )}
-      />`;
+          </FormItem>`;
+      break;
+    case "textarea":
+      d = `<FormItem>
+            <FormLabel>${item.label}</FormLabel>
+            <FormControl>
+              <Textarea
+                {...field} 
+                ${item.disabled ? "disabled" : ""}
+                placeholder="${item.placeholder}"
+              />
+            </FormControl>
+            <FormDescription>${item.description}</FormDescription>
+            <FormMessage />
+          </FormItem>`;
+      break;
+    case "slider":
+      d = `<FormItem>
+            <div className="flex flex-col gap-2">
+              <FormLabel>${item.label}</FormLabel>
+              <FormControl>
+                <Slider
+                  min={0}
+                  max={100}
+                  step={5}
+                  defaultValue={[25]}
+                  value={[field.value || 0]}
+                  onValueChange={(vals) => {
+                    field.onChange(vals[0]);
+                  }}
+                  ${item.disabled ? "disabled" : ""}
+                />
+              </FormControl>
+            </div>
+            ${item.description ? `<FormDescription>${item.description}</FormDescription>` : null}
+            <FormMessage />
+          </FormItem>`;
+      break;
+    case "input-otp":
+      d = `<FormItem>
+            <div className="flex flex-col gap-2">
+              <FormLabel>${item.label}</FormLabel>
+              <FormControl>
+                <InputOTP
+                  maxLength={6}
+                  {...field}
+                  ${item.disabled ? "disabled" : ""}
+                  value={field.value}
+                  onChange={field.onChange}
+                >
+                  <InputOTPGroup>
+                    <InputOTPSlot index={0} />
+                    <InputOTPSlot index={1} />
+                    <InputOTPSlot index={2} />
+                  </InputOTPGroup>
+                  <InputOTPSeparator />
+                  <InputOTPGroup>
+                    <InputOTPSlot index={3} />
+                    <InputOTPSlot index={4} />
+                    <InputOTPSlot index={5} />
+                  </InputOTPGroup>
+                </InputOTP>
+              </FormControl>
+            </div>
+            ${item.description ? `<FormDescription>${item.description}</FormDescription>` : null}
+            <FormMessage />
+          </FormItem>`;
+      break;
+    case "datepicker":
+      d = `<FormItem className="flex flex-col">
+            <FormLabel>${item.label}</FormLabel>
+            <Popover>
+              <PopoverTrigger asChild>
+                <FormControl>
+                  <Button
+                    variant={"outline"}
+                    className={cn(
+                      "w-[240px] pl-3 text-left font-normal",
+                      !field.value && "text-muted-foreground",
+                    )}
+                    ${item.disabled ? "disabled" : ""}
+                  >
+                    {field.value ? (
+                      format(field.value, "PPP")
+                    ) : (
+                      <span>${item.placeholder}</span>
+                    )}
+                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                  </Button>
+                </FormControl>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={field.value}
+                  onSelect={field.onChange}
+                  disabled={(date) =>
+                    date > new Date() || date < new Date("1900-01-01")
+                  }
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+            ${item.description ? `<FormDescription>${item.description}</FormDescription>` : null}
+            <FormMessage />
+          </FormItem>`;
+      break;
     default:
-      return "";
+      d = "";
+      break;
   }
+
+  const wrapper = () => `<FormField
+        control={form.control}
+        name="${item.id}"
+        render={({ field }) => (${d})}
+      />`;
+
+  return wrapper();
 };
 
+// generate code for given layouts
 const generateCode = (items: ILayout[]) => {
-  const wrapWithMain = (d: string, n: number) =>
-    `<div className="grid grid-cols-${n}">${d}</div>`;
+  const wrapWithMain = (d: string) =>
+    `<div className="grid space-x-6 items-center" style={{ gridTemplateColumns: "repeat(100, 1fr)" }}>${d}</div>`;
 
-  const wrapWithSecondary = (d: string) => `<div>${d}</div>`;
+  const wrapWithSecondary = (d: string, index: number, totalItems: number) => {
+    return `<div style={{gridColumn:"${getStyle(index, totalItems).style.gridColumn}"}}>${d}</div>`;
+  };
 
   const code = items.reduce((prev, curr) => {
-    const childCode = curr.children.reduce((p, c) => {
+    const childCode = curr.children.reduce((p, c, ci) => {
       const itemCode = generateItemTemplate(c);
       if (curr.children.length > 1) {
-        return p + wrapWithSecondary(itemCode);
+        return p + wrapWithSecondary(itemCode, ci, curr.children.length);
       } else {
         return p + itemCode;
       }
     }, "");
     if (curr.children.length > 1) {
-      return prev + wrapWithMain(childCode, curr.children.length);
+      return prev + wrapWithMain(childCode);
     } else {
       return prev + childCode;
     }
@@ -146,6 +316,7 @@ const generateCode = (items: ILayout[]) => {
   return code;
 };
 
+// format the generated code
 const formatCode = ({ code }: { code: string }) => {
   return prettier.format(code, {
     parser: "babel-ts",
@@ -154,12 +325,13 @@ const formatCode = ({ code }: { code: string }) => {
   });
 };
 
-export const getCode = ({ items }: { items: ILayout[] }) => {
+// get final code
+export const getCode = ({ layouts }: { layouts: ILayout[] }) => {
   return formatCode({
     code: wrapperTemplate({
-      body: generateCode(items),
-      imports: generateImportsForItems(items),
-      formSchema: "",
+      body: generateCode(layouts),
+      imports: generateImportsForItems(layouts),
+      formSchema: generateZodSchema(layouts),
     }),
   });
 };

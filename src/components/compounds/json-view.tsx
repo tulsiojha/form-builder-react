@@ -1,12 +1,18 @@
 "use client";
 
+import { ILayout } from "@/utils/types";
 import CodeBlock from "../atoms/code-block";
+import ViewLayout from "../molecules/view-layout";
+import { cleanJson } from "@/utils/commons";
 
-const JsonView = ({ items }: { items: any }) => {
+const JsonView = ({ layouts }: { layouts: ILayout[] }) => {
   return (
-    <div className="flex flex-col gap-3">
-      <CodeBlock code={JSON.stringify(items, null, 2)} language="json" />
-    </div>
+    <ViewLayout layouts={layouts}>
+      <CodeBlock
+        code={JSON.stringify(cleanJson({ layouts }), null, 2)}
+        language="json"
+      />
+    </ViewLayout>
   );
 };
 

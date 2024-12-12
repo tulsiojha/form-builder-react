@@ -1,33 +1,31 @@
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "../ui/label";
-import { ChangeEventHandler, CSSProperties, ReactNode } from "react";
+import {
+  FormControl,
+  FormDescription,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../ui/form";
+import { IComponent } from "@/utils/types";
+import { Textarea } from "../ui/textarea";
 
-type ITextArea = {
-  label?: ReactNode;
-  placeholder?: string;
-  htmlFor?: string;
-  value?: string;
-  onChange?: ChangeEventHandler<HTMLTextAreaElement>;
-  style?: CSSProperties;
-};
-
-const CTextArea = ({
-  label = "Name",
-  htmlFor = "name",
-  placeholder = "Name",
-  value,
-  onChange,
-  style,
-}: ITextArea) => {
+const CTextArea = ({ style, field, item }: IComponent) => {
   return (
-    <div className="grid gap-1.5 flex-shrink-0" style={style}>
-      <Label htmlFor={htmlFor}>{label}</Label>
-      <Textarea
-        placeholder={placeholder}
-        id={htmlFor}
-        value={value}
-        onChange={onChange}
-      />
+    <div className="grid items-center gap-1.5" style={style}>
+      <FormItem>
+        <FormLabel>
+          {item.label}
+          {item.required ? "*" : null}
+        </FormLabel>
+        <FormControl>
+          <Textarea
+            {...field}
+            disabled={item.disabled}
+            placeholder={item.placeholder}
+          />
+        </FormControl>
+        <FormDescription>{item.description}</FormDescription>
+        <FormMessage />
+      </FormItem>
     </div>
   );
 };

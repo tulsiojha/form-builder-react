@@ -11,14 +11,10 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { ILayout } from "@/utils/types";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Home() {
-  const [items, setItems] = useState<ILayout[]>([]);
-
-  useEffect(() => {
-    console.log(items);
-  }, [items]);
+  const [layouts, setLayouts] = useState<ILayout[]>([]);
 
   return (
     <div className="grid grid-rows-[50px,auto] max-h-screen min-h-screen">
@@ -32,7 +28,7 @@ export default function Home() {
           className="h-full border md:min-w-[450px] w-full"
         >
           <ResizablePanel defaultSize={65}>
-            <FormSection onItemChanged={setItems} />
+            <FormSection onItemChanged={setLayouts} />
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel
@@ -49,9 +45,9 @@ export default function Home() {
                   { label: "Code", value: "code" },
                 ]}
                 contents={[
-                  { render: <JsonView items={items} />, value: "json" },
-                  { render: <PreView layouts={items} />, value: "preview" },
-                  { render: <CodeView items={items} />, value: "code" },
+                  { render: <PreView layouts={layouts} />, value: "preview" },
+                  { render: <JsonView layouts={layouts} />, value: "json" },
+                  { render: <CodeView layouts={layouts} />, value: "code" },
                 ]}
               />
             </div>
