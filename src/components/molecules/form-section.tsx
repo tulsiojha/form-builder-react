@@ -1,11 +1,12 @@
 "use client";
 import { v4 as uuid } from "uuid";
-import { ILayout } from "@/utils/types";
+import { IItem, ILayout } from "@/utils/types";
 import { useState } from "react";
 import { ReactSortable } from "react-sortablejs";
 import { GripHorizontalIcon, PencilIcon, Plus, TrashIcon } from "lucide-react";
 import Modal from "./modal";
 import ComponentModal from "./modal-components";
+import { FieldValues } from "react-hook-form";
 
 const FormSection = ({
   onItemChanged,
@@ -16,34 +17,125 @@ const FormSection = ({
 }) => {
   const [items, setItems] = useState<ILayout[]>(layouts);
 
+  const handleRowLayout = (e: ILayout[]) => {
+    if (e.length > 0) {
+      const tItem = e.map((x) => {
+        if (!!x?.layout) {
+          return x;
+        } else {
+          return {
+            layout: true,
+            id: uuid(),
+            //@ts-expect-error: this is valid condition as drop element can be ILayout or IItem
+            children: [{ ...x, id: `${x.kind}_${uuid()}` }],
+          };
+        }
+      });
+
+      setItems(
+        //@ts-expect-error: this is valid condition as drop element can be ILayout or IItem
+        tItem,
+      );
+      //@ts-expect-error: this is valid condition as drop element can be ILayout or IItem
+      onItemChanged(tItem);
+    }
+  };
+
+  const handleColumnLayout = (d: IItem[], layout: ILayout) => {
+    // add into existing layout if dragged into existing canvas
+    const tItem = items.map((cur) => {
+      if (cur.id === layout.id) {
+        return { ...cur, children: d };
+      } else {
+        return cur;
+      }
+    });
+    setItems(tItem);
+    onItemChanged(tItem);
+  };
+
+  const editItem = (e: FieldValues, layout: ILayout, item: IItem) => {
+    // modify item properties
+    const tItem = items.map((cur) => {
+      if (cur.id === layout.id) {
+        return {
+          ...cur,
+          children: cur.children.map((c) => {
+            if (c.id === item.id) {
+              return { ...item, ...e };
+            } else {
+              return c;
+            }
+          }),
+        };
+      } else {
+        return cur;
+      }
+    });
+    setItems(tItem);
+    onItemChanged(tItem);
+  };
+
+  const deleteItem = (layout: ILayout, item: IItem) => {
+    // delete item
+    const layoutChildCounts = items.find((f) => f.id === layout.id)?.children
+      .length;
+
+    let tItem = items;
+    if (!!layoutChildCounts && layoutChildCounts > 1) {
+      tItem = items.map((cur) => {
+        if (cur.id === layout.id) {
+          return {
+            ...cur,
+            children: cur.children.filter((f) => f.id != item.id),
+          };
+        } else {
+          return cur;
+        }
+      });
+    } else {
+      tItem = items.filter((f) => f.id !== layout.id);
+    }
+    setItems(tItem);
+    onItemChanged(tItem);
+  };
+
+  const addItem = (layout: ILayout, item: IItem) => {
+    // add item via modal
+    const tItem = items.map((cur) => {
+      if (cur.id === layout.id) {
+        return {
+          ...cur,
+          children: [
+            ...cur.children,
+            { ...item, id: `${item.kind}_${uuid()}` },
+          ],
+        };
+      } else {
+        return cur;
+      }
+    });
+    setItems(tItem);
+    onItemChanged(tItem);
+  };
+
+  const addLayout = (item: IItem) => {
+    //add layout with component via modal
+    const layout = {
+      layout: true,
+      id: uuid(),
+      children: [item],
+    };
+    const layouts = [...items, layout];
+    setItems(layouts);
+    onItemChanged(layouts);
+  };
+
   return (
     <div className="relative h-full dot-background overflow-auto w-full pl-4 pr-8 py-4">
       <ReactSortable
         list={items}
-        setList={(e) => {
-          // add new layout if dragged into outer canvas
-          if (e.length > 0) {
-            const tItem = e.map((x) => {
-              if (!!x?.layout) {
-                return x;
-              } else {
-                return {
-                  layout: true,
-                  id: uuid(),
-                  //@ts-expect-error: this is valid condition as drop element can be ILayout or IItem
-                  children: [{ ...x, id: `${x.kind}_${uuid()}` }],
-                };
-              }
-            });
-
-            setItems(
-              //@ts-expect-error: this is valid condition as drop element can be ILayout or IItem
-              tItem,
-            );
-            //@ts-expect-error: this is valid condition as drop element can be ILayout or IItem
-            onItemChanged(tItem);
-          }
-        }}
+        setList={handleRowLayout}
         {...{
           group: {
             name: "nested",
@@ -68,16 +160,7 @@ const FormSection = ({
                 key={item.id}
                 list={item.children}
                 setList={(d) => {
-                  // add into existing layout if dragged into existing canvas
-                  const tItem = items.map((cur) => {
-                    if (cur.id === item.id) {
-                      return { ...cur, children: d };
-                    } else {
-                      return cur;
-                    }
-                  });
-                  setItems(tItem);
-                  onItemChanged(tItem);
+                  handleColumnLayout(d, item);
                 }}
                 animation={150}
                 {...{
@@ -105,25 +188,7 @@ const FormSection = ({
                       <Modal
                         data={i}
                         onSubmit={(e) => {
-                          // modify item properties
-                          const tItem = items.map((cur) => {
-                            if (cur.id === item.id) {
-                              return {
-                                ...cur,
-                                children: cur.children.map((c) => {
-                                  if (c.id === i.id) {
-                                    return { ...i, ...e };
-                                  } else {
-                                    return c;
-                                  }
-                                }),
-                              };
-                            } else {
-                              return cur;
-                            }
-                          });
-                          setItems(tItem);
-                          onItemChanged(tItem);
+                          editItem(e, item, i);
                         }}
                       >
                         <button className="rounded hover:bg-black/5 p-1">
@@ -133,30 +198,7 @@ const FormSection = ({
                       <button
                         className="rounded hover:bg-black/5 p-1"
                         onClick={() => {
-                          // delete item
-                          const layoutChildCounts = items.find(
-                            (f) => f.id === item.id,
-                          )?.children.length;
-
-                          let tItem = items;
-                          if (!!layoutChildCounts && layoutChildCounts > 1) {
-                            tItem = items.map((cur) => {
-                              if (cur.id === item.id) {
-                                return {
-                                  ...cur,
-                                  children: cur.children.filter(
-                                    (f) => f.id != i.id,
-                                  ),
-                                };
-                              } else {
-                                return cur;
-                              }
-                            });
-                          } else {
-                            tItem = items.filter((f) => f.id !== item.id);
-                          }
-                          setItems(tItem);
-                          onItemChanged(tItem);
+                          deleteItem(item, i);
                         }}
                       >
                         <TrashIcon size={12} />
@@ -167,22 +209,7 @@ const FormSection = ({
                 <div className="flex items-center justify-center ml-2 no-drag md:hidden">
                   <ComponentModal
                     onSubmit={(e) => {
-                      // add item via modal
-                      const tItem = items.map((cur) => {
-                        if (cur.id === item.id) {
-                          return {
-                            ...cur,
-                            children: [
-                              ...cur.children,
-                              { ...e, id: `${e.kind}_${uuid()}` },
-                            ],
-                          };
-                        } else {
-                          return cur;
-                        }
-                      });
-                      setItems(tItem);
-                      onItemChanged(tItem);
+                      addItem(item, e);
                     }}
                   >
                     <button className="h-[36px] text-slate-800 hover:text-black aspect-square flex items-center justify-center bg-black/5 backdrop-blur-md mr-2 rounded-full">
@@ -197,15 +224,7 @@ const FormSection = ({
         <div className="flex items-center mt-4 z-50 no-drag md:hidden">
           <ComponentModal
             onSubmit={(e) => {
-              //add layout with component via modal
-              const layout = {
-                layout: true,
-                id: uuid(),
-                children: [e],
-              };
-              const layouts = [...items, layout];
-              setItems(layouts);
-              onItemChanged(layouts);
+              addLayout(e);
             }}
           >
             <button className="h-[36px] text-slate-800 hover:text-black aspect-square flex items-center justify-center bg-black/5 backdrop-blur-md mr-2 rounded-full">
