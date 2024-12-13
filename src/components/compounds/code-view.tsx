@@ -16,7 +16,7 @@ const CodeView = ({ layouts }: { layouts: ILayout[] }) => {
 
   return (
     <ViewLayout layouts={layouts}>
-      <div className="absolute left-0 right-0">
+      <div className="absolute left-0 right-0 max-h-[calc(100vh_-_114px)]">
         <CodeBlock code={code} language="jsx" />
       </div>
     </ViewLayout>
