@@ -76,7 +76,7 @@ const PreView = ({ layouts }: { layouts: ILayout[] }) => {
     <ViewLayout layouts={layouts}>
       <Form {...form}>
         <form
-          className="flex flex-col gap-6 max-w-3xl max-h-[calc(100vh_-_114px)] overflow-auto"
+          className="flex flex-col gap-6 max-w-3xl max-h-[calc(100vh_-_120px)] md:max-h-[calc(100vh_-_114px)] overflow-auto"
           onSubmit={form.handleSubmit(handleSubmit)}
         >
           <div className="flex flex-col gap-6 pt-4">

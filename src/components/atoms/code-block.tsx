@@ -12,7 +12,7 @@ const CodeBlock = ({
 
   return (
     <div className="relative">
-      <pre className="hljs p-3 overflow-auto max-h-[calc(100vh_-_114px)]">
+      <pre className="hljs p-3 overflow-auto max-h-[calc(100vh_-_120px)] md:max-h-[calc(100vh_-_114px)]">
         <code dangerouslySetInnerHTML={{ __html: highlightedCode }} />
       </pre>
       <Copy code={code} />
