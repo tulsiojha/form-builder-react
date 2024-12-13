@@ -1,7 +1,7 @@
 "use client";
 import { v4 as uuid } from "uuid";
 import { IItem, ILayout } from "@/utils/types";
-import { useState } from "react";
+
 import { ReactSortable } from "react-sortablejs";
 import { GripHorizontalIcon, PencilIcon, Plus, TrashIcon } from "lucide-react";
 import Modal from "./modal";
@@ -15,8 +15,6 @@ const FormSection = ({
   onItemChanged: (p: ILayout[]) => void;
   layouts?: ILayout[];
 }) => {
-  const [items, setItems] = useState<ILayout[]>(layouts);
-
   const handleRowLayout = (e: ILayout[]) => {
     if (e.length > 0) {
       const tItem = e.map((x) => {
@@ -32,10 +30,6 @@ const FormSection = ({
         }
       });
 
-      setItems(
-        //@ts-expect-error: this is valid condition as drop element can be ILayout or IItem
-        tItem,
-      );
       //@ts-expect-error: this is valid condition as drop element can be ILayout or IItem
       onItemChanged(tItem);
     }
@@ -43,20 +37,19 @@ const FormSection = ({
 
   const handleColumnLayout = (d: IItem[], layout: ILayout) => {
     // add into existing layout if dragged into existing canvas
-    const tItem = items.map((cur) => {
+    const tItem = layouts.map((cur) => {
       if (cur.id === layout.id) {
         return { ...cur, children: d };
       } else {
         return cur;
       }
     });
-    setItems(tItem);
     onItemChanged(tItem);
   };
 
   const editItem = (e: FieldValues, layout: ILayout, item: IItem) => {
     // modify item properties
-    const tItem = items.map((cur) => {
+    const tItem = layouts.map((cur) => {
       if (cur.id === layout.id) {
         return {
           ...cur,
@@ -72,18 +65,17 @@ const FormSection = ({
         return cur;
       }
     });
-    setItems(tItem);
     onItemChanged(tItem);
   };
 
   const deleteItem = (layout: ILayout, item: IItem) => {
     // delete item
-    const layoutChildCounts = items.find((f) => f.id === layout.id)?.children
+    const layoutChildCounts = layouts.find((f) => f.id === layout.id)?.children
       .length;
 
-    let tItem = items;
+    let tItem = layouts;
     if (!!layoutChildCounts && layoutChildCounts > 1) {
-      tItem = items.map((cur) => {
+      tItem = layouts.map((cur) => {
         if (cur.id === layout.id) {
           return {
             ...cur,
@@ -94,15 +86,14 @@ const FormSection = ({
         }
       });
     } else {
-      tItem = items.filter((f) => f.id !== layout.id);
+      tItem = layouts.filter((f) => f.id !== layout.id);
     }
-    setItems(tItem);
     onItemChanged(tItem);
   };
 
   const addItem = (layout: ILayout, item: IItem) => {
     // add item via modal
-    const tItem = items.map((cur) => {
+    const tItem = layouts.map((cur) => {
       if (cur.id === layout.id) {
         return {
           ...cur,
@@ -115,7 +106,6 @@ const FormSection = ({
         return cur;
       }
     });
-    setItems(tItem);
     onItemChanged(tItem);
   };
 
@@ -126,15 +116,14 @@ const FormSection = ({
       id: uuid(),
       children: [item],
     };
-    const layouts = [...items, layout];
-    setItems(layouts);
-    onItemChanged(layouts);
+    const lts = [...layouts, layout];
+    onItemChanged(lts);
   };
 
   return (
     <div className="relative h-full dot-background overflow-auto w-full pl-4 pr-8 py-4">
       <ReactSortable
-        list={items}
+        list={layouts}
         setList={handleRowLayout}
         {...{
           group: {
@@ -150,17 +139,17 @@ const FormSection = ({
         ghostClass="vertical-ghost"
         filter={".no-drag"}
       >
-        {items.map((item) => {
+        {layouts.map((layout) => {
           return (
-            <div key={item.id} className="flex flex-row w-full">
+            <div key={layout.id} className="flex flex-row w-full">
               <div className="shrink-0 drag-handle flex items-center justify-center mr-2  cursor-pointer">
                 <GripHorizontalIcon size={18} />
               </div>
               <ReactSortable
-                key={item.id}
-                list={item.children}
+                key={layout.id}
+                list={layout.children}
                 setList={(d) => {
-                  handleColumnLayout(d, item);
+                  handleColumnLayout(d, layout);
                 }}
                 animation={150}
                 {...{
@@ -175,7 +164,7 @@ const FormSection = ({
                 ghostClass="horizontal-ghost"
                 filter={".no-drag"}
               >
-                {item.children.map((i) => (
+                {layout.children.map((i) => (
                   <div
                     key={i.id}
                     className="h-10 max-w-[200px] min-w-[200px] border border-gray-200 rounded flex flex-row gap-2 items-center justify-between px-2 bg-white cursor-pointer"
@@ -188,7 +177,7 @@ const FormSection = ({
                       <Modal
                         data={i}
                         onSubmit={(e) => {
-                          editItem(e, item, i);
+                          editItem(e, layout, i);
                         }}
                       >
                         <button className="rounded hover:bg-black/5 p-1">
@@ -198,7 +187,7 @@ const FormSection = ({
                       <button
                         className="rounded hover:bg-black/5 p-1"
                         onClick={() => {
-                          deleteItem(item, i);
+                          deleteItem(layout, i);
                         }}
                       >
                         <TrashIcon size={12} />
@@ -206,10 +195,10 @@ const FormSection = ({
                     </div>
                   </div>
                 ))}
-                <div className="flex items-center justify-center ml-2 no-drag md:hidden">
+                <div className="flex items-center justify-center ml-2 no-drag">
                   <ComponentModal
                     onSubmit={(e) => {
-                      addItem(item, e);
+                      addItem(layout, e);
                     }}
                   >
                     <button className="h-[36px] text-slate-800 hover:text-black aspect-square flex items-center justify-center bg-black/5 backdrop-blur-md mr-2 rounded-full">
@@ -234,7 +223,7 @@ const FormSection = ({
         </div>
       </ReactSortable>
 
-      {items.length === 0 ? (
+      {layouts.length === 0 ? (
         <div className="absolute flex items-center justify-center left-0 right-0 bottom-0 top-0">
           <span className="hidden md:block">
             Drag and drop elements from left panel into here.

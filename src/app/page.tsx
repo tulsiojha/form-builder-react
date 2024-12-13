@@ -16,6 +16,7 @@ import { ILayout } from "@/utils/types";
 import { LucideGithub, Sidebar } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { v4 as uuid } from "uuid";
 
 const Tabs = ({ layouts }: { layouts: ILayout[] }) => {
   return (
@@ -70,10 +71,17 @@ export default function Home() {
       </div>
       <div className="flex flex-col md:flex-row max-h-[calc(100vh-50px)] max-w-screen">
         <div className="border-r border-black/10 p-4 box-border overflow-auto hidden md:block md:w-[230px]">
-          <ComponentSection />
+          <ComponentSection
+            onItemClick={(item) => {
+              setLayouts((p) => [
+                ...p,
+                { layout: true, id: uuid(), children: [item] },
+              ]);
+            }}
+          />
         </div>
         <div className="md:hidden flex-1" style={{ maxWidth: "100vw" }}>
-          <FormSection onItemChanged={setLayouts} />
+          <FormSection onItemChanged={setLayouts} layouts={layouts} />
         </div>
         <div className="h-full hidden md:block w-full">
           <ResizablePanelGroup
@@ -81,7 +89,7 @@ export default function Home() {
             className="h-full border md:min-w-[450px] w-full"
           >
             <ResizablePanel defaultSize={65}>
-              <FormSection onItemChanged={setLayouts} />
+              <FormSection onItemChanged={setLayouts} layouts={layouts} />
             </ResizablePanel>
             <ResizableHandle withHandle />
             <ResizablePanel defaultSize={35} minSize={35}>

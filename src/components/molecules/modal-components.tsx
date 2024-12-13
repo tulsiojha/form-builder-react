@@ -31,7 +31,7 @@ const ComponentModal = ({
             <div className="flex flex-col gap-2">
               {components.map((item) => {
                 return (
-                  <div
+                  <button
                     key={item.id}
                     className="h-14 border border-gray-200 rounded flex flex-row gap-2 items-center px-2 bg-white cursor-pointer"
                     onClick={() => {
@@ -41,7 +41,7 @@ const ComponentModal = ({
                   >
                     <span>{item.icon}</span>
                     <span className="text-sm">{item.displayName}</span>
-                  </div>
+                  </button>
                 );
               })}
             </div>

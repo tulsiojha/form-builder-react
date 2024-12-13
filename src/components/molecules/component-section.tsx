@@ -5,7 +5,11 @@ import { ReactSortable } from "react-sortablejs";
 import { components } from "@/utils/data";
 import { IItem } from "@/utils/types";
 
-const ComponentSection = () => {
+const ComponentSection = ({
+  onItemClick,
+}: {
+  onItemClick: (item: IItem) => void;
+}) => {
   const [items, setItems] = useState<typeof components>([]);
 
   useEffect(() => {
@@ -28,13 +32,16 @@ const ComponentSection = () => {
       className="md:min-h-[200px] w-full flex flex-row md:flex-col gap-2"
     >
       {items.map((item) => (
-        <div
+        <button
           key={item.id}
           className="h-10 border border-gray-200 rounded flex flex-row gap-2 items-center px-2 bg-white cursor-pointer"
+          onClick={() => {
+            onItemClick?.(item);
+          }}
         >
           <span>{item.icon}</span>
           <span className="text-sm">{item.displayName}</span>
-        </div>
+        </button>
       ))}
     </ReactSortable>
   );
