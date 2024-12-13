@@ -31,6 +31,7 @@ const cleanJson = ({ layouts }: { layouts: ILayout[] }) => {
       layout: layout.layout,
       children: layout.children.map((item) => ({
         id: item.id,
+        label: item.label,
         kind: item.kind,
         description: item.description,
         placeholder: item.placeholder,

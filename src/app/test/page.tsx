@@ -13,8 +13,7 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Popover,
@@ -25,15 +24,21 @@ import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const formSchema = z.object({
-  "slider_023ce75b-cc37-4f9e-9f98-64f9151139e7": z
-    .number()
-    .optional()
-    .default(0),
-  "switch_0e2779f0-9b77-4f9e-9b64-99783ce88cba": z.boolean().optional(),
-  "textarea_24727e4c-6ee4-47a7-b8cc-bc24bcf974fd": z.string().optional(),
-  "datepicker_605b34ca-c3f7-47ad-8374-4bc2a9fb572b": z.coerce.date(),
+  "text-input_a92074cd-282e-4f68-8674-ca2b9bdbb578": z.string().optional(),
+  "textarea_7ed68a00-b01e-4b96-b217-e47ee7e3d1bc": z.string().optional(),
+  "textarea_9a8dc52a-d3df-4c0d-823d-a28e289d4af1": z.string().optional(),
+  "datepicker_8e36ae3b-14d9-4790-8f8a-97eaaadfc503": z.coerce.date().optional(),
+  "select_b2c74527-7716-4b7e-8859-5bacd3813a69": z.string().optional(),
 });
 
 type ISchema = z.infer<typeof formSchema>;
@@ -55,57 +60,21 @@ const NewForm = () => {
       >
         <FormField
           control={form.control}
-          name="slider_023ce75b-cc37-4f9e-9f98-64f9151139e7"
+          name="text-input_a92074cd-282e-4f68-8674-ca2b9bdbb578"
           render={({ field }) => (
             <FormItem>
-              <div className="flex flex-col gap-2">
-                <FormLabel>Slider</FormLabel>
-                <FormControl>
-                  <Slider
-                    min={0}
-                    max={100}
-                    step={5}
-                    defaultValue={[25]}
-                    value={[field.value || 0]}
-                    onValueChange={(vals) => {
-                      field.onChange(vals[0]);
-                    }}
-                  />
-                </FormControl>
-              </div>
-              <FormDescription>Description</FormDescription>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input {...field} placeholder="name" />
+              </FormControl>
+              <FormDescription>Enter your name</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
         <FormField
           control={form.control}
-          name="switch_0e2779f0-9b77-4f9e-9b64-99783ce88cba"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex flex-row items-start gap-2">
-                <FormControl>
-                  <Switch
-                    {...field}
-                    value=""
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <div className="flex flex-col gap-1">
-                  <FormLabel>Enable Notifications</FormLabel>
-                  <FormDescription>
-                    Turn on to receive real-time updates
-                  </FormDescription>
-                </div>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="textarea_24727e4c-6ee4-47a7-b8cc-bc24bcf974fd"
+          name="textarea_7ed68a00-b01e-4b96-b217-e47ee7e3d1bc"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Description</FormLabel>
@@ -119,7 +88,21 @@ const NewForm = () => {
         />
         <FormField
           control={form.control}
-          name="datepicker_605b34ca-c3f7-47ad-8374-4bc2a9fb572b"
+          name="textarea_9a8dc52a-d3df-4c0d-823d-a28e289d4af1"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <Textarea {...field} placeholder="description" />
+              </FormControl>
+              <FormDescription>Tell us about yourself</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="datepicker_8e36ae3b-14d9-4790-8f8a-97eaaadfc503"
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel>Date of birth</FormLabel>
@@ -157,6 +140,35 @@ const NewForm = () => {
               <FormDescription>
                 Your date of birth is used to calculate your age.
               </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="select_b2c74527-7716-4b7e-8859-5bacd3813a69"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>Fruits</FormLabel>
+              <Select
+                {...field}
+                value={field.value}
+                onValueChange={field.onChange}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select fruit" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="apple">Apple</SelectItem>
+                    <SelectItem value="banana">Banana</SelectItem>
+                    <SelectItem value="blueberry">Blueberry</SelectItem>
+                    <SelectItem value="grapes">Grapes</SelectItem>
+                    <SelectItem value="pineapple">Pineapple</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              <FormDescription>You can select fruits here</FormDescription>
               <FormMessage />
             </FormItem>
           )}

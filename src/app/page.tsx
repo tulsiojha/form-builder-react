@@ -3,6 +3,7 @@ import CodeView from "@/components/compounds/code-view";
 import JsonView from "@/components/compounds/json-view";
 import PreView from "@/components/compounds/pre-view";
 import TabView from "@/components/compounds/tab-view";
+import CTextInput from "@/components/list-components/c-text-input";
 import ComponentSection from "@/components/molecules/component-section";
 import FormSection from "@/components/molecules/form-section";
 import MobileDrawer from "@/components/molecules/mobile-drawer";
@@ -12,7 +13,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { ILayout } from "@/utils/types";
-import { Sidebar } from "lucide-react";
+import { Sidebar, TextCursorInputIcon } from "lucide-react";
 import { useState } from "react";
 
 const Tabs = ({ layouts }: { layouts: ILayout[] }) => {

@@ -1,7 +1,7 @@
 "use client";
 import { v4 as uuid } from "uuid";
 import { IItem, ILayout } from "@/utils/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ReactSortable } from "react-sortablejs";
 import { GripHorizontalIcon, PencilIcon, Plus, TrashIcon } from "lucide-react";
 import Modal from "./modal";
@@ -9,10 +9,12 @@ import ComponentModal from "./modal-components";
 
 const FormSection = ({
   onItemChanged,
+  layouts = [],
 }: {
   onItemChanged: (p: any) => void;
+  layouts?: ILayout[];
 }) => {
-  const [items, setItems] = useState<ILayout[]>([]);
+  const [items, setItems] = useState<ILayout[]>(layouts);
 
   return (
     <div className="relative h-full dot-background overflow-auto w-full pl-4 pr-8 py-4">

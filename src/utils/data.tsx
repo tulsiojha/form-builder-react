@@ -18,7 +18,6 @@ import CInputOTP from "@/components/list-components/c-input-otp";
 import CDatepicker from "@/components/list-components/c-datepicker";
 import CSlider from "@/components/list-components/c-slider";
 import CSelect from "@/components/list-components/c-select";
-import { SelectViewport } from "@radix-ui/react-select";
 
 const commonDefault = {
   disabled: false,
