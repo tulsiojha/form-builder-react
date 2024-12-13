@@ -43,7 +43,7 @@ const components: IItem[] = [
     component: CCheckbox,
   },
   {
-    id: "text-input",
+    id: `text-input_${uuid()}`,
     kind: "text-input",
     label: "Name",
     description: "Enter your name",
@@ -55,7 +55,7 @@ const components: IItem[] = [
     type: "text",
   },
   {
-    id: "textarea",
+    id: `textarea_${uuid()}`,
     kind: "textarea",
     label: "Description",
     description: "Tell us about yourself",
@@ -66,7 +66,7 @@ const components: IItem[] = [
     component: CTextArea,
   },
   {
-    id: "slider",
+    id: `slider_${uuid()}`,
     kind: "slider",
     label: "Slider",
     description: "Description",
@@ -76,7 +76,7 @@ const components: IItem[] = [
     component: CSlider,
   },
   {
-    id: "switch",
+    id: `switch_${uuid()}`,
     kind: "switch",
     label: "Enable Notifications",
     description: "Turn on to receive real-time updates",
@@ -86,7 +86,7 @@ const components: IItem[] = [
     component: CSwitch,
   },
   {
-    id: "input-otp",
+    id: `input-otp_${uuid()}`,
     kind: "input-otp",
     label: "Input OTP",
     description: "Enter your one-time password.",
@@ -96,7 +96,7 @@ const components: IItem[] = [
     component: CInputOTP,
   },
   {
-    id: "datepicker",
+    id: `datepicker_${uuid()}`,
     kind: "datepicker",
     label: "Date of birth",
     description: "Your date of birth is used to calculate your age.",
@@ -107,7 +107,7 @@ const components: IItem[] = [
     component: CDatepicker,
   },
   {
-    id: "select",
+    id: `select_${uuid()}`,
     kind: "select",
     label: "Fruits",
     description: "You can select fruits here",
