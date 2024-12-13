@@ -79,6 +79,7 @@ body {
 }
 .vertical-ghost {
   max-width: 200px;
+  opacity: 0.6;
 }
 
 .horizontal-ghost {

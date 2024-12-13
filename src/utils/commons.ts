@@ -1,4 +1,5 @@
-import { ILayout } from "./types";
+import { IItem, ILayout } from "./types";
+import * as z from "zod";
 
 const getSpanForIndex = (
   index: number,
@@ -43,4 +44,57 @@ const cleanJson = ({ layouts }: { layouts: ILayout[] }) => {
   });
 };
 
-export { getSpanForIndex, getStyle, cleanJson };
+const generateSchema = (
+  type: "text" | "email" | "number" | "boolean" | "date",
+  item: IItem,
+) => {
+  let zz = null;
+  switch (type) {
+    case "number":
+      zz = z.number();
+      break;
+    case "boolean":
+      zz = z.boolean();
+      zz = zz.default(false);
+      break;
+    case "date":
+      zz = z.coerce.date();
+      break;
+    case "email":
+      {
+        zz = z.string();
+        zz = zz?.email();
+        if (item.required) {
+          zz = zz.nonempty("Required");
+        }
+        if (item.pattern) {
+          zz = zz.regex(new RegExp(item.pattern || ""));
+        }
+      }
+      break;
+    case "text":
+      {
+        zz = z.string();
+        if (item.required) {
+          zz = zz.nonempty("Required");
+        }
+        if (item.pattern) {
+          zz = zz.regex(new RegExp(item.pattern || ""));
+        }
+      }
+      break;
+    default:
+      {
+        zz = z.any();
+      }
+      break;
+  }
+
+  if (!item.required) {
+    zz = zz?.optional();
+  }
+
+  return zz;
+};
+
+export { getSpanForIndex, getStyle, cleanJson, generateSchema };

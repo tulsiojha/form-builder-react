@@ -1,62 +1,18 @@
 "use client";
 
-import { IItem, ILayout } from "@/utils/types";
+import { ILayout } from "@/utils/types";
 import { Form, FormField } from "../ui/form";
 import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { getStyle } from "@/utils/commons";
+import { generateSchema, getStyle } from "@/utils/commons";
 import ViewLayout from "../molecules/view-layout";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
+import MessageModal from "../molecules/modal-message";
+import CodeBlock from "../atoms/code-block";
 
 const PreView = ({ layouts }: { layouts: ILayout[] }) => {
-  const generateSchema = (
-    type: "text" | "email" | "number" | "boolean" | "date",
-    item: IItem,
-  ) => {
-    let zz = null;
-    switch (type) {
-      case "number":
-        zz = z.number();
-        break;
-      case "boolean":
-        zz = z.boolean();
-        zz = zz.default(false);
-        break;
-      case "text":
-        {
-          zz = z.string();
-          if (item.required) {
-            zz = zz.nonempty("Required");
-          }
-          if (item.pattern) {
-            zz = zz.regex(new RegExp(item.pattern || ""));
-          }
-        }
-        break;
-      case "email":
-        {
-          zz = z.string();
-          zz = zz?.email();
-          if (item.required) {
-            zz = zz.nonempty("Required");
-          }
-          if (item.pattern) {
-            zz = zz.regex(new RegExp(item.pattern || ""));
-          }
-        }
-        break;
-      case "date":
-        zz = z.coerce.date();
-        break;
-      default:
-    }
-
-    if (!item.required) {
-      zz = zz?.optional();
-    }
-  };
   // generate zod schema for given layouts
   const ss = useCallback(() => {
     const s = layouts
@@ -66,71 +22,33 @@ const PreView = ({ layouts }: { layouts: ILayout[] }) => {
           case "switch":
           case "checkbox":
             {
-              let zz:
-                | z.ZodBoolean
-                | z.ZodOptional<z.ZodBoolean>
-                | z.ZodDefault<z.ZodBoolean> = z.boolean();
-              if (!c.required) {
-                zz = zz.optional();
-              } else {
-                zz = zz.default(false);
-              }
-              p[c.id] = zz;
+              p[c.id] = generateSchema("boolean", c);
             }
             break;
           case "textarea":
+          case "select":
           case "text-input":
             {
-              let zz: z.ZodString | z.ZodOptional<z.ZodString> = z.string();
               if (c.type === "email") {
-                zz = zz.email();
+                p[c.id] = generateSchema("email", c);
+              } else {
+                p[c.id] = generateSchema("text", c);
               }
-              if (c.required) {
-                zz = zz.nonempty("Required");
-              }
-              if (c.pattern) {
-                zz = zz.regex(new RegExp(c.pattern || ""));
-              }
-              if (!c.required) {
-                zz = zz.optional();
-              }
-              p[c.id] = zz;
             }
             break;
           case "slider":
             {
-              let zz:
-                | z.ZodNumber
-                | z.ZodOptional<z.ZodNumber>
-                | z.ZodDefault<z.ZodNumber>
-                | z.ZodDefault<z.ZodOptional<z.ZodNumber>> = z.number();
-
-              if (!c.required) {
-                zz = zz.optional();
-              }
-              zz = zz.default(0);
-              p[c.id] = zz;
+              p[c.id] = generateSchema("number", c);
             }
             break;
           case "input-otp":
             {
-              let zz: z.ZodString | z.ZodOptional<z.ZodString> = z.string();
-              if (c.required) {
-                zz = zz.nonempty("Required");
-              }
-              if (!c.required) {
-                zz = zz.optional();
-              }
-              p[c.id] = zz;
+              p[c.id] = generateSchema("text", c);
             }
             break;
           case "datepicker":
             {
-              let zz: z.ZodDate | z.ZodOptional<z.ZodDate> = z.coerce.date();
-              if (!c.required) {
-                zz = zz.optional();
-              }
-              p[c.id] = zz;
+              p[c.id] = generateSchema("date", c);
             }
             break;
         }
@@ -144,8 +62,12 @@ const PreView = ({ layouts }: { layouts: ILayout[] }) => {
     resolver: zodResolver(ss()),
   });
 
+  const [value, setValue] = useState("");
+
+  const [messageModalOpen, setMessageModalOpen] = useState(false);
   const handleSubmit = (e: any) => {
-    console.log(e);
+    setValue(JSON.stringify(e, null, 2));
+    setMessageModalOpen(true);
   };
 
   return (
@@ -189,6 +111,9 @@ const PreView = ({ layouts }: { layouts: ILayout[] }) => {
           </Button>
         </form>
       </Form>
+      <MessageModal setOpen={setMessageModalOpen} open={messageModalOpen}>
+        <CodeBlock code={value} language="json" />
+      </MessageModal>
     </ViewLayout>
   );
 };

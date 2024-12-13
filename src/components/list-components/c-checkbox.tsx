@@ -14,7 +14,13 @@ const CCheckbox = ({ field, item, style }: IComponent) => {
       <FormItem>
         <div className="flex flex-row items-start gap-2">
           <FormControl>
-            <Checkbox {...field} disabled={item.disabled} />
+            <Checkbox
+              {...field}
+              disabled={item.disabled}
+              value={field.value}
+              checked={field.value}
+              onCheckedChange={field.onChange}
+            />
           </FormControl>
           <div className="flex flex-col gap-1">
             <FormLabel>{item.label}</FormLabel>

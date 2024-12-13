@@ -2,6 +2,7 @@ import {
   Calendar,
   Check,
   LetterTextIcon,
+  List,
   RectangleEllipsisIcon,
   SlidersHorizontalIcon,
   TextCursorInputIcon,
@@ -16,6 +17,8 @@ import CSwitch from "@/components/list-components/c-switch";
 import CInputOTP from "@/components/list-components/c-input-otp";
 import CDatepicker from "@/components/list-components/c-datepicker";
 import CSlider from "@/components/list-components/c-slider";
+import CSelect from "@/components/list-components/c-select";
+import { SelectViewport } from "@radix-ui/react-select";
 
 const commonDefault = {
   disabled: false,
@@ -104,6 +107,17 @@ const components: IItem[] = [
     ...commonDefault,
     component: CDatepicker,
   },
+  {
+    id: "select",
+    kind: "select",
+    label: "Fruits",
+    description: "You can select fruits here",
+    displayName: "Select",
+    placeholder: "Select fruit",
+    icon: <List size={14} />,
+    ...commonDefault,
+    component: CSelect,
+  },
 ];
 
 const imports = {
@@ -117,11 +131,13 @@ const imports = {
   ],
   datepicker: [
     `import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";`,
-    `import { Button } from "@/components/ui/button";`,
     `import { cn } from "@/lib/utils";`,
     `import { CalendarIcon } from "lucide-react";`,
     `import { Calendar } from "@/components/ui/calendar";`,
     `import { format } from "date-fns";`,
+  ],
+  select: [
+    `import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";`,
   ],
 };
 

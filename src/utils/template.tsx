@@ -86,6 +86,8 @@ const generateZodSchema = (items: ILayout[]) => {
         return `"${item.id}":${item.required ? "z.string()" : "z.string().optional()"},`;
       case "datepicker":
         return `"${item.id}":${item.required ? "z.coerce.date()" : "z.coerce.date().optional()"},`;
+      case "select":
+        return `"${item.id}":${item.required ? "z.string()" : "z.string().optional()"},`;
       default:
         return "";
     }
@@ -271,6 +273,31 @@ const generateItemTemplate = (item: IItem) => {
                 />
               </PopoverContent>
             </Popover>
+            ${item.description ? `<FormDescription>${item.description}</FormDescription>` : null}
+            <FormMessage />
+          </FormItem>`;
+      break;
+    case "select":
+      d = `<FormItem className="flex flex-col">
+            <FormLabel>${item.label}</FormLabel>
+            <Select
+              {...field}
+              value={field.value}
+              onValueChange={field.onChange}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="${item.placeholder}" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  <SelectItem value="apple">Apple</SelectItem>
+                  <SelectItem value="banana">Banana</SelectItem>
+                  <SelectItem value="blueberry">Blueberry</SelectItem>
+                  <SelectItem value="grapes">Grapes</SelectItem>
+                  <SelectItem value="pineapple">Pineapple</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
             ${item.description ? `<FormDescription>${item.description}</FormDescription>` : null}
             <FormMessage />
           </FormItem>`;

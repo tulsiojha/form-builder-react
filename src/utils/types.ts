@@ -9,7 +9,8 @@ export interface IItem {
     | "slider"
     | "switch"
     | "input-otp"
-    | "datepicker";
+    | "datepicker"
+    | "select";
   displayName: string;
   icon: ReactNode;
   label?: string;
@@ -24,7 +25,7 @@ export interface IItem {
 
 export interface ILayout {
   id: string;
-  layout: true;
+  layout: boolean;
   children: IItem[];
 }
 

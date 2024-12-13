@@ -24,7 +24,7 @@ const ComponentSection = () => {
         clone: (item: any) => ({ ...item, id: `${item.kind}_${uuid()}` }),
         sort: false,
       }}
-      className="min-h-[200px] w-full flex flex-col gap-2"
+      className="md:min-h-[200px] w-full flex flex-row md:flex-col gap-2"
     >
       {items.map((item) => (
         <div

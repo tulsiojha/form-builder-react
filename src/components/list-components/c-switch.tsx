@@ -14,7 +14,13 @@ const CSwitch = ({ style, field, item }: IComponent) => {
       <FormItem>
         <div className="flex flex-row items-start gap-2">
           <FormControl>
-            <Switch {...field} disabled={item.disabled} />
+            <Switch
+              {...field}
+              disabled={item.disabled}
+              value={field.value}
+              checked={field.value}
+              onCheckedChange={field.onChange}
+            />
           </FormControl>
           <div className="flex flex-col gap-1">
             <FormLabel>{item.label}</FormLabel>
