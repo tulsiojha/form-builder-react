@@ -20,6 +20,8 @@ export interface IItem {
   disabled?: boolean;
   pattern?: string;
   type?: string;
+  min?: string;
+  max?: string;
   component: (props: IComponent) => JSX.Element;
 }
 

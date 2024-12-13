@@ -2,7 +2,7 @@ import * as prettier from "prettier/standalone";
 import * as parserBabel from "prettier/parser-babel";
 import * as prettierPluginEstree from "prettier/plugins/estree";
 import { IItem, ILayout } from "./types";
-import { getStyle } from "./commons";
+import { generateStaticZodSchema, getStyle } from "./commons";
 import { imports } from "./data";
 
 // Outer template for code generatioon
@@ -45,6 +45,7 @@ const NewForm = ()=>{
 
   const handleSubmit = (e: ISchema) => {
     console.log(e);
+    alert(JSON.stringify(e, null, 2));
   };
 
 
@@ -72,22 +73,24 @@ const generateZodSchema = (items: ILayout[]) => {
     switch (item.kind) {
       case "switch":
       case "checkbox":
-        return `"${item.id}":${
-          item.required
-            ? "z.boolean().default(false)"
-            : "z.boolean().optional()"
-        },`;
+        return `"${item.id}":${generateStaticZodSchema("boolean", item)},`;
       case "textarea":
-      case "text-input":
-        return `"${item.id}":${item.required ? "z.string()" : "z.string().optional()"},`;
-      case "slider":
-        return `"${item.id}":${item.required ? "z.number().default(0)" : "z.number().optional().default(0)"},`;
-      case "input-otp":
-        return `"${item.id}":${item.required ? "z.string()" : "z.string().optional()"},`;
-      case "datepicker":
-        return `"${item.id}":${item.required ? "z.coerce.date()" : "z.coerce.date().optional()"},`;
       case "select":
-        return `"${item.id}":${item.required ? "z.string()" : "z.string().optional()"},`;
+      case "text-input": {
+        if (item.type === "email") {
+          return `"${item.id}":${generateStaticZodSchema("email", item)},`;
+        } else if (item.type === "number") {
+          return `"${item.id}":${generateStaticZodSchema("number", item)},`;
+        } else {
+          return `"${item.id}":${generateStaticZodSchema("text", item)},`;
+        }
+      }
+      case "slider":
+        return `"${item.id}":${generateStaticZodSchema("number", item)},`;
+      case "input-otp":
+        return `"${item.id}":${generateStaticZodSchema("text", item)},`;
+      case "datepicker":
+        return `"${item.id}":${generateStaticZodSchema("date", item)},`;
       default:
         return "";
     }

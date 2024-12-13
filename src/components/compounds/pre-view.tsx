@@ -31,6 +31,8 @@ const PreView = ({ layouts }: { layouts: ILayout[] }) => {
             {
               if (c.type === "email") {
                 p[c.id] = generateSchema("email", c);
+              } else if (c.type === "number") {
+                p[c.id] = generateSchema("number", c);
               } else {
                 p[c.id] = generateSchema("text", c);
               }

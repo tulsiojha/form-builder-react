@@ -22,6 +22,13 @@ const CTextInput = ({ style, field, item }: IComponent) => {
             disabled={item.disabled}
             placeholder={item.placeholder}
             type={item.type || "text"}
+            onChange={(e) => {
+              if (item.type === "number") {
+                field.onChange(parseInt(e.target.value));
+              } else {
+                field.onChange(e.target.value);
+              }
+            }}
           />
         </FormControl>
         <FormDescription>{item.description}</FormDescription>

@@ -38,6 +38,8 @@ const formSchema = z.object({
   disabled: z.boolean().default(false),
   pattern: z.string().optional(),
   type: z.string().optional(),
+  min: z.string().optional(),
+  max: z.string().optional(),
 });
 
 type ISchema = z.infer<typeof formSchema>;
@@ -187,19 +189,51 @@ const Modal = ({ onSubmit, data, children }: IModal) => {
                 )}
               />
             </div>
-            <FormField
-              control={form.control}
-              name="pattern"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>RegEx Pattern</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Pattern" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {["text-input", "textarea", "slider"].includes(data.kind) ? (
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="min"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Min</FormLabel>
+                      <FormControl>
+                        <Input placeholder="min" {...field} type="number" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="max"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Max</FormLabel>
+                      <FormControl>
+                        <Input placeholder="max" {...field} type="numbers" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            ) : null}
+            {["text-input", "textarea"].includes(data.kind) ? (
+              <FormField
+                control={form.control}
+                name="pattern"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel>RegEx Pattern</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Pattern" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : null}
             <DialogFooter>
               <Button type="submit">Save changes</Button>
             </DialogFooter>
