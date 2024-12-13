@@ -86,9 +86,9 @@ export default function Home() {
         <div className="h-full hidden md:block w-full">
           <ResizablePanelGroup
             direction="horizontal"
-            className="h-full border md:min-w-[450px] w-full"
+            className="h-full border w-full"
           >
-            <ResizablePanel defaultSize={65}>
+            <ResizablePanel defaultSize={65} maxSize={65}>
               <FormSection onItemChanged={setLayouts} layouts={layouts} />
             </ResizablePanel>
             <ResizableHandle withHandle />

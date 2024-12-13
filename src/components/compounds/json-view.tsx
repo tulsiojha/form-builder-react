@@ -8,10 +8,12 @@ import { cleanJson } from "@/utils/commons";
 const JsonView = ({ layouts }: { layouts: ILayout[] }) => {
   return (
     <ViewLayout layouts={layouts}>
-      <CodeBlock
-        code={JSON.stringify(cleanJson({ layouts }), null, 2)}
-        language="json"
-      />
+      <div className="absolute left-0 right-0">
+        <CodeBlock
+          code={JSON.stringify(cleanJson({ layouts }), null, 2)}
+          language="json"
+        />
+      </div>
     </ViewLayout>
   );
 };

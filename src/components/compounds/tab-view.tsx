@@ -20,7 +20,7 @@ const TabView = ({ triggers = [], contents = [], defaultValue }: ITabs) => {
         <TabsContent
           key={c.value}
           value={c.value}
-          className="overflow-auto h-[calc(100vh_-_114px)] min-h-full"
+          className="h-[calc(100vh_-_114px)] min-h-full"
         >
           {c.render}
         </TabsContent>

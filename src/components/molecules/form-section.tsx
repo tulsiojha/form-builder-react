@@ -121,7 +121,7 @@ const FormSection = ({
   };
 
   return (
-    <div className="relative h-full dot-background overflow-auto w-full pl-4 pr-8 py-4">
+    <div className="relative h-full dot-background w-full pl-4 pr-8 py-4 overflow-auto">
       <ReactSortable
         list={layouts}
         setList={handleRowLayout}
