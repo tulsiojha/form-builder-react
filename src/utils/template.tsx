@@ -169,6 +169,7 @@ const generateItemTemplate = (item: IItem) => {
                 {...field} 
                 ${item.disabled ? "disabled" : ""}
                 placeholder="${item.placeholder}"
+                type="${item.type || "text"}"
               />
             </FormControl>
             <FormDescription>${item.description}</FormDescription>

@@ -69,7 +69,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="flex flex-col md:flex-row max-h-[calc(100vh-50px)] max-w-screen">
+      <div className="flex flex-col md:flex-row max-h-[calc(100vh_-_50px)] max-w-screen">
         <div className="border-r border-black/10 p-4 box-border overflow-auto hidden md:block md:w-[230px]">
           <ComponentSection
             onItemClick={(item) => {
