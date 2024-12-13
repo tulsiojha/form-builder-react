@@ -44,7 +44,7 @@ export default function Home() {
       style={{ maxWidth: "100vw" }}
     >
       <div className="h-[50px] border-b border-black/10 items-center justify-between px-4 flex flex-row sticky top-0 z-50 bg-white">
-        <div className="flex-1 text-sm">Dynamic form builder</div>
+        <div className="flex-1 text-sm font-bold">Dynamic form builder</div>
         <div className="flex flex-row items-center gap-1">
           <div>
             <Button variant={"ghost"} asChild>
