@@ -80,7 +80,10 @@ export default function Home() {
             }}
           />
         </div>
-        <div className="md:hidden flex-1" style={{ maxWidth: "100vw" }}>
+        <div
+          className="md:hidden flex-1 max-h-[calc(100vh_-_50px)]"
+          style={{ maxWidth: "100vw" }}
+        >
           <FormSection onItemChanged={setLayouts} layouts={layouts} />
         </div>
         <div className="h-full hidden md:block w-full">
