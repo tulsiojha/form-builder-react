@@ -67,7 +67,7 @@ const PreView = ({ layouts }: { layouts: ILayout[] }) => {
   const [value, setValue] = useState("");
 
   const [messageModalOpen, setMessageModalOpen] = useState(false);
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e: { [key: string]: string | number | boolean }) => {
     setValue(JSON.stringify(e, null, 2));
     setMessageModalOpen(true);
   };

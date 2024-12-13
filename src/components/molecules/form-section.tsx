@@ -1,7 +1,7 @@
 "use client";
 import { v4 as uuid } from "uuid";
-import { IItem, ILayout } from "@/utils/types";
-import { useEffect, useState } from "react";
+import { ILayout } from "@/utils/types";
+import { useState } from "react";
 import { ReactSortable } from "react-sortablejs";
 import { GripHorizontalIcon, PencilIcon, Plus, TrashIcon } from "lucide-react";
 import Modal from "./modal";
@@ -11,7 +11,7 @@ const FormSection = ({
   onItemChanged,
   layouts = [],
 }: {
-  onItemChanged: (p: any) => void;
+  onItemChanged: (p: ILayout[]) => void;
   layouts?: ILayout[];
 }) => {
   const [items, setItems] = useState<ILayout[]>(layouts);
@@ -30,16 +30,17 @@ const FormSection = ({
                 return {
                   layout: true,
                   id: uuid(),
-                  //@ts-ignore
+                  //@ts-expect-error: this is valid condition as drop element can be ILayout or IItem
                   children: [{ ...x, id: `${x.kind}_${uuid()}` }],
                 };
               }
             });
 
             setItems(
-              //@ts-ignore
+              //@ts-expect-error: this is valid condition as drop element can be ILayout or IItem
               tItem,
             );
+            //@ts-expect-error: this is valid condition as drop element can be ILayout or IItem
             onItemChanged(tItem);
           }
         }}

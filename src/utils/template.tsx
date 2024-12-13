@@ -350,7 +350,7 @@ const generateCode = (items: ILayout[]) => {
 const formatCode = ({ code }: { code: string }) => {
   return prettier.format(code, {
     parser: "babel-ts",
-    //@ts-ignore
+    //@ts-expect-error: this line should produce ts error but it is intentional
     plugins: [parserBabel, prettierPluginEstree],
   });
 };

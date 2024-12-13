@@ -3,6 +3,7 @@ import { v4 as uuid } from "uuid";
 import { useEffect, useState } from "react";
 import { ReactSortable } from "react-sortablejs";
 import { components } from "@/utils/data";
+import { IItem } from "@/utils/types";
 
 const ComponentSection = () => {
   const [items, setItems] = useState<typeof components>([]);
@@ -21,7 +22,7 @@ const ComponentSection = () => {
           pull: "clone",
           put: false,
         },
-        clone: (item: any) => ({ ...item, id: `${item.kind}_${uuid()}` }),
+        clone: (item: IItem) => ({ ...item, id: `${item.kind}_${uuid()}` }),
         sort: false,
       }}
       className="md:min-h-[200px] w-full flex flex-row md:flex-col gap-2"

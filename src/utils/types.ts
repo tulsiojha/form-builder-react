@@ -1,4 +1,5 @@
 import { CSSProperties, JSX, ReactNode } from "react";
+import { ControllerRenderProps } from "react-hook-form";
 
 export interface IItem {
   id: string;
@@ -33,7 +34,7 @@ export interface ILayout {
 
 export interface IComponent {
   item: IItem;
-  field: any;
+  field: ControllerRenderProps;
   style?: CSSProperties;
 }
 
