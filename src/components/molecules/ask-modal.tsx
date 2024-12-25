@@ -29,7 +29,7 @@ const AskAIModal = ({
           <DialogTitle>Ask AI</DialogTitle>
         </DialogHeader>
         <form
-          className="flex flex-row items-center gap-2"
+          className="flex flex-col items-center gap-4"
           onSubmit={async (e) => {
             e.preventDefault();
             if (input) {
@@ -64,17 +64,29 @@ const AskAIModal = ({
             setLoading(false);
           }}
         >
-          <Input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask ai to generate form"
-            disabled={loading}
-          />
-          <Button disabled={loading} type="submit">
-            {loading && <Loader2 className="animate-spin" />}
+          <div className="text-sm text-gray-400">
+            <p>
+              This ai form builder is experimental and has limited capabilities
+              since it is trained in very small dataset. It is slow (takes about
+              1 min to respond) and sometime errors may occur.
+            </p>
+            <p className="mt-2 tex-xs font-semibold">
+              Example prompt: Design a medical history form.
+            </p>
+          </div>
+          <div className="flex flex-row items-center gap-2 w-full">
+            <Input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Ask ai to generate form"
+              disabled={loading}
+            />
+            <Button disabled={loading} type="submit">
+              {loading && <Loader2 className="animate-spin" />}
 
-            <Send size={16} />
-          </Button>
+              <Send size={16} />
+            </Button>
+          </div>
         </form>
       </DialogContent>
     </Dialog>
