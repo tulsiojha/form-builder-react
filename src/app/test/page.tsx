@@ -15,62 +15,23 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSeparator,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
-import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 
 const formSchema = z.object({
-  "text-input_110e091d-f277-42e8-be3f-cfb1607b2752": z
-    .string()
-    .min(3)
-    .max(8)
-    .nonempty("Required"),
-  "text-input_fa5293de-1124-414b-b92d-2da6417db3bf": z
-    .string()
-    .nonempty("Required"),
-  "text-input_50bbba48-097d-4795-af0f-8256bf05048d": z
-    .string()
-    .min(5)
-    .max(10)
-    .nonempty("Required"),
-  "text-input_372f0d19-0954-473f-8af3-b79501fe80a2": z
-    .string()
-    .email()
-    .nonempty("Required"),
-  "textarea_4385a494-593f-4efd-9ed6-676df4bf7561": z.string().optional(),
-  "select_e0ce5a46-dd39-4b45-ba36-60083d018ece": z.string().optional(),
-  "datepicker_4d981dd2-2a8f-4468-9a63-39c528bbde8e": z.coerce.date().optional(),
-  "input-otp_98f057df-ce64-4090-91b2-4a3d9ae6bfa3": z.string().optional(),
-  "switch_fcd92327-f678-4799-8351-63449bb1d8e0": z
+  "text-input_73583068-27ed-4901-bd62-8259fd8cd203": z.string().optional(),
+  "textarea_e3404771-9648-4e91-91b8-92cb45bceae2": z.string().optional(),
+  "checkbox_cbc7e36d-5a6a-4543-9678-7f062c963254": z
     .boolean()
     .default(false)
     .optional(),
-  "checkbox_b2b111a8-b63c-4318-bea8-884e3ccb0770": z
+  "checkbox_8803b802-5237-474e-82a2-3062113c7730": z
     .boolean()
     .default(false)
     .optional(),
+  "text-input_14b65632-6e84-43a6-a224-a3d4731c5bd7": z.string().optional(),
+  "text-input_7a533cf4-a182-4d93-ae47-3cf2312f955e": z.string().optional(),
+  "text-input_a5fcb396-597c-4a10-b59b-05f2483e15e1": z.string().optional(),
+  "text-input_9215f9ba-2e39-4065-bfb9-293135f0572b": z.string().optional(),
 });
 
 type ISchema = z.infer<typeof formSchema>;
@@ -98,14 +59,14 @@ const NewForm = () => {
           <div style={{ gridColumn: "span 50" }}>
             <FormField
               control={form.control}
-              name="text-input_110e091d-f277-42e8-be3f-cfb1607b2752"
+              name="text-input_73583068-27ed-4901-bd62-8259fd8cd203"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>First name</FormLabel>
+                  <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="fname" type="text" />
+                    <Input {...field} placeholder="name" type="text" />
                   </FormControl>
-                  <FormDescription>Enter your fname</FormDescription>
+                  <FormDescription>Enter your name</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -114,14 +75,105 @@ const NewForm = () => {
           <div style={{ gridColumn: "span 50" }}>
             <FormField
               control={form.control}
-              name="text-input_fa5293de-1124-414b-b92d-2da6417db3bf"
+              name="textarea_e3404771-9648-4e91-91b8-92cb45bceae2"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Last name</FormLabel>
+                  <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="lname" type="text" />
+                    <Textarea {...field} placeholder="description" />
                   </FormControl>
-                  <FormDescription>Enter your lname</FormDescription>
+                  <FormDescription>Tell us about yourself</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
+        <div
+          className="grid space-x-6 items-center"
+          style={{ gridTemplateColumns: "repeat(100, 1fr)" }}
+        >
+          <div style={{ gridColumn: "span 25" }}>
+            <FormField
+              control={form.control}
+              name="checkbox_cbc7e36d-5a6a-4543-9678-7f062c963254"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex flex-row items-start gap-2">
+                    <FormControl>
+                      <Checkbox
+                        {...field}
+                        value=""
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="flex flex-col gap-1">
+                      <FormLabel>Subscribe to newsletter</FormLabel>
+                      <FormDescription>
+                        Stay updated with our latest news and offers
+                      </FormDescription>
+                    </div>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div style={{ gridColumn: "span 25" }}>
+            <FormField
+              control={form.control}
+              name="checkbox_8803b802-5237-474e-82a2-3062113c7730"
+              render={({ field }) => (
+                <FormItem>
+                  <div className="flex flex-row items-start gap-2">
+                    <FormControl>
+                      <Checkbox
+                        {...field}
+                        value=""
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                    <div className="flex flex-col gap-1">
+                      <FormLabel>Subscribe to newsletter</FormLabel>
+                      <FormDescription>
+                        Stay updated with our latest news and offers
+                      </FormDescription>
+                    </div>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div style={{ gridColumn: "span 25" }}>
+            <FormField
+              control={form.control}
+              name="text-input_14b65632-6e84-43a6-a224-a3d4731c5bd7"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="name" type="text" />
+                  </FormControl>
+                  <FormDescription>Enter your name</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div style={{ gridColumn: "span 25" }}>
+            <FormField
+              control={form.control}
+              name="text-input_7a533cf4-a182-4d93-ae47-3cf2312f955e"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="name" type="text" />
+                  </FormControl>
+                  <FormDescription>Enter your name</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -130,206 +182,28 @@ const NewForm = () => {
         </div>
         <FormField
           control={form.control}
-          name="text-input_50bbba48-097d-4795-af0f-8256bf05048d"
+          name="text-input_a5fcb396-597c-4a10-b59b-05f2483e15e1"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input
-                  {...field}
-                  placeholder="*******************"
-                  type="password"
-                />
+                <Input {...field} placeholder="name" type="text" />
               </FormControl>
-              <FormDescription>Enter your password.</FormDescription>
+              <FormDescription>Enter your name</FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
         <FormField
           control={form.control}
-          name="text-input_372f0d19-0954-473f-8af3-b79501fe80a2"
+          name="text-input_9215f9ba-2e39-4065-bfb9-293135f0572b"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input
-                  {...field}
-                  placeholder="someone@domain.com"
-                  type="email"
-                />
+                <Input {...field} placeholder="name" type="text" />
               </FormControl>
-              <FormDescription>Enter your email.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="textarea_4385a494-593f-4efd-9ed6-676df4bf7561"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea {...field} placeholder="description" />
-              </FormControl>
-              <FormDescription>Tell us about yourself</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="select_e0ce5a46-dd39-4b45-ba36-60083d018ece"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Fruits</FormLabel>
-              <Select
-                {...field}
-                value={field.value}
-                onValueChange={field.onChange}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select fruit" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="apple">Apple</SelectItem>
-                    <SelectItem value="banana">Banana</SelectItem>
-                    <SelectItem value="blueberry">Blueberry</SelectItem>
-                    <SelectItem value="grapes">Grapes</SelectItem>
-                    <SelectItem value="pineapple">Pineapple</SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              <FormDescription>You can select fruits here</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="datepicker_4d981dd2-2a8f-4468-9a63-39c528bbde8e"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Date of birth</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-[240px] pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground",
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, "PPP")
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={(date) =>
-                      date > new Date() || date < new Date("1900-01-01")
-                    }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              <FormDescription>
-                Your date of birth is used to calculate your age.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="input-otp_98f057df-ce64-4090-91b2-4a3d9ae6bfa3"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex flex-col gap-2">
-                <FormLabel>Input OTP</FormLabel>
-                <FormControl>
-                  <InputOTP
-                    maxLength={6}
-                    {...field}
-                    value={field.value}
-                    onChange={field.onChange}
-                  >
-                    <InputOTPGroup>
-                      <InputOTPSlot index={0} />
-                      <InputOTPSlot index={1} />
-                      <InputOTPSlot index={2} />
-                    </InputOTPGroup>
-                    <InputOTPSeparator />
-                    <InputOTPGroup>
-                      <InputOTPSlot index={3} />
-                      <InputOTPSlot index={4} />
-                      <InputOTPSlot index={5} />
-                    </InputOTPGroup>
-                  </InputOTP>
-                </FormControl>
-              </div>
-              <FormDescription>Enter your one-time password.</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="switch_fcd92327-f678-4799-8351-63449bb1d8e0"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex flex-row items-start gap-2">
-                <FormControl>
-                  <Switch
-                    {...field}
-                    value=""
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <div className="flex flex-col gap-1">
-                  <FormLabel>Enable Notifications</FormLabel>
-                  <FormDescription>
-                    Turn on to receive real-time updates
-                  </FormDescription>
-                </div>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="checkbox_b2b111a8-b63c-4318-bea8-884e3ccb0770"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex flex-row items-start gap-2">
-                <FormControl>
-                  <Checkbox
-                    {...field}
-                    value=""
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <div className="flex flex-col gap-1">
-                  <FormLabel>Subscribe to newsletter</FormLabel>
-                  <FormDescription>
-                    Stay updated with our latest news and offers
-                  </FormDescription>
-                </div>
-              </div>
+              <FormDescription>Enter your name</FormDescription>
               <FormMessage />
             </FormItem>
           )}

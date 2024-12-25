@@ -3,6 +3,7 @@ import CodeView from "@/components/compounds/code-view";
 import JsonView from "@/components/compounds/json-view";
 import PreView from "@/components/compounds/pre-view";
 import TabView from "@/components/compounds/tab-view";
+import AskAIModal from "@/components/molecules/ask-modal";
 import ComponentSection from "@/components/molecules/component-section";
 import FormSection from "@/components/molecules/form-section";
 import MobileDrawer from "@/components/molecules/mobile-drawer";
@@ -12,8 +13,9 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { items } from "@/utils/data";
 import { ILayout } from "@/utils/types";
-import { LucideGithub, Sidebar } from "lucide-react";
+import { LucideGithub, Sidebar, Wand2Icon } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { v4 as uuid } from "uuid";
@@ -38,6 +40,7 @@ const Tabs = ({ layouts }: { layouts: ILayout[] }) => {
 
 export default function Home() {
   const [layouts, setLayouts] = useState<ILayout[]>([]);
+  const [askAIModal, setAskAIModal] = useState(false);
 
   return (
     <div
@@ -103,6 +106,29 @@ export default function Home() {
           </ResizablePanelGroup>
         </div>
       </div>
+      <div className="z-50 absolute bottom-5 right-5 shadow-lg">
+        <Button size={"icon"} onClick={() => setAskAIModal(true)}>
+          <Wand2Icon size={20} />
+        </Button>
+      </div>
+      <AskAIModal
+        open={askAIModal}
+        setOpen={setAskAIModal}
+        onSubmit={(e) => {
+          const xx = e.map((m) => ({
+            ...m,
+            children: m.children.map((mm) => {
+              return {
+                ...mm,
+                icon: items[mm.kind].icon,
+                component: items[mm.kind].component,
+              };
+            }),
+          }));
+          setLayouts(xx);
+          setAskAIModal(false);
+        }}
+      />
     </div>
   );
 }

@@ -26,6 +26,45 @@ const commonDefault = {
   type: "",
 };
 
+export const items = {
+  "text-input": {
+    icon: <TextCursorInputIcon size={14} />,
+    component: CTextInput,
+  },
+  checkbox: {
+    icon: (
+      <div className="border border-black rounded">
+        <Check size={14} />
+      </div>
+    ),
+    component: CCheckbox,
+  },
+  textarea: {
+    icon: <LetterTextIcon size={14} />,
+    component: CTextArea,
+  },
+  slider: {
+    icon: <SlidersHorizontalIcon size={14} />,
+    component: CSlider,
+  },
+  switch: {
+    icon: <ToggleLeftIcon size={14} />,
+    component: CSwitch,
+  },
+  "input-otp": {
+    icon: <RectangleEllipsisIcon size={14} />,
+    component: CInputOTP,
+  },
+  datepicker: {
+    icon: <Calendar size={14} />,
+    component: CDatepicker,
+  },
+  select: {
+    icon: <List size={14} />,
+    component: CSelect,
+  },
+};
+
 const components: IItem[] = [
   {
     id: `checkbox_${uuid()}`,
@@ -34,13 +73,8 @@ const components: IItem[] = [
     label: "Subscribe to newsletter",
     description: "Stay updated with our latest news and offers",
     placeholder: "checkbox",
-    icon: (
-      <div className="border border-black rounded">
-        <Check size={14} />
-      </div>
-    ),
     ...commonDefault,
-    component: CCheckbox,
+    ...items["checkbox"],
   },
   {
     id: `text-input_${uuid()}`,
@@ -49,10 +83,9 @@ const components: IItem[] = [
     description: "Enter your name",
     placeholder: "name",
     displayName: "TextInput",
-    icon: <TextCursorInputIcon size={14} />,
     ...commonDefault,
-    component: CTextInput,
     type: "text",
+    ...items["text-input"],
   },
   {
     id: `textarea_${uuid()}`,
@@ -61,9 +94,8 @@ const components: IItem[] = [
     description: "Tell us about yourself",
     placeholder: "description",
     displayName: "TextArea",
-    icon: <LetterTextIcon size={14} />,
     ...commonDefault,
-    component: CTextArea,
+    ...items["textarea"],
   },
   {
     id: `slider_${uuid()}`,
@@ -71,9 +103,8 @@ const components: IItem[] = [
     label: "Slider",
     description: "Description",
     displayName: "Slider",
-    icon: <SlidersHorizontalIcon size={14} />,
     ...commonDefault,
-    component: CSlider,
+    ...items["slider"],
   },
   {
     id: `switch_${uuid()}`,
@@ -81,9 +112,8 @@ const components: IItem[] = [
     label: "Enable Notifications",
     description: "Turn on to receive real-time updates",
     displayName: "Switch",
-    icon: <ToggleLeftIcon size={14} />,
     ...commonDefault,
-    component: CSwitch,
+    ...items["switch"],
   },
   {
     id: `input-otp_${uuid()}`,
@@ -91,9 +121,8 @@ const components: IItem[] = [
     label: "Input OTP",
     description: "Enter your one-time password.",
     displayName: "Input OTP",
-    icon: <RectangleEllipsisIcon size={14} />,
     ...commonDefault,
-    component: CInputOTP,
+    ...items["input-otp"],
   },
   {
     id: `datepicker_${uuid()}`,
@@ -102,9 +131,8 @@ const components: IItem[] = [
     description: "Your date of birth is used to calculate your age.",
     displayName: "Datepicker",
     placeholder: "Pick a date",
-    icon: <Calendar size={14} />,
     ...commonDefault,
-    component: CDatepicker,
+    ...items["datepicker"],
   },
   {
     id: `select_${uuid()}`,
@@ -113,9 +141,8 @@ const components: IItem[] = [
     description: "You can select fruits here",
     displayName: "Select",
     placeholder: "Select fruit",
-    icon: <List size={14} />,
     ...commonDefault,
-    component: CSelect,
+    ...items["select"],
   },
 ];
 
