@@ -11,7 +11,6 @@ import { Loader2, Send } from "lucide-react";
 import { ILayout } from "@/utils/types";
 
 const AskAIModal = ({
-  children,
   open,
   setOpen,
   onSubmit,
